@@ -17,7 +17,11 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "migrate:create": "typeorm-ts-node-commonjs migration:create",
+    "migrate:run": "typeorm-ts-node-commonjs migration:run -d ./src/config/dataSource.ts",
+    "migrate:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert -d ./src/config/dataSource.ts",
+    "migrate:show": "ts-node ./node_modules/typeorm/cli.js migration:show -d ./src/config/dataSource.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
