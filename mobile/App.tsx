@@ -1,19 +1,19 @@
-import React from 'react'
-import { NativeBaseProvider, StatusBar } from 'native-base'
+import React from "react";
+import { NativeBaseProvider, StatusBar, Text } from "native-base";
 import {
   useFonts,
   Roboto_400Regular,
   Roboto_700Bold,
-} from '@expo-google-fonts/roboto'
+} from "@expo-google-fonts/roboto";
 
-import { THEME } from './src/styles/theme'
+import { THEME } from "./src/styles/theme";
 
-import { Loading } from './src/components/Loading'
+import { Loading } from "./src/components/Loading";
 
-import { Routes } from './src/routes'
+import { Routes } from "./src/routes";
 
 export default function App() {
-  const [fontLoaded] = useFonts({ Roboto_700Bold, Roboto_400Regular })
+  const [fontLoaded] = useFonts({ Roboto_700Bold, Roboto_400Regular });
 
   return (
     <NativeBaseProvider theme={THEME}>
@@ -24,5 +24,5 @@ export default function App() {
       />
       {fontLoaded ? <Routes /> : <Loading />}
     </NativeBaseProvider>
-  )
+  );
 }

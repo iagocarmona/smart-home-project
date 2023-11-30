@@ -1,17 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { IDevice } from './interfaces/device.interface';
+import { DeviceRepository } from './device.repository';
+import { DeviceEntity } from './entities/device.entity';
 
 @Injectable()
 export class DeviceService {
-  private readonly devices: IDevice[] = [];
+  constructor(
+    @Inject(DeviceRepository) private readonly repository: DeviceRepository,
+  ) {}
 
-  create(device: IDevice) {
-    this.devices.push(device);
-
-    return device;
+  async create(device: IDevice) {
+    return this.repository.save(device);
   }
 
-  findAll(): IDevice[] {
-    return this.devices;
+  async list(): Promise<[DeviceEntity[], number]> {
+    return this.repository.list();
   }
 }

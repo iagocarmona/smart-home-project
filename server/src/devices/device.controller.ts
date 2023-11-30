@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { DeviceService } from './device.service';
 import { IDevice } from './interfaces/device.interface';
+import { PagedDataDTO } from 'src/DTOs/pagedDataDTO';
 
 @Controller('devices')
 export class DeviceController {
@@ -12,7 +13,8 @@ export class DeviceController {
   }
 
   @Get()
-  async findAll(): Promise<string> {
-    return 'This action returns all cats';
+  async list(): Promise<PagedDataDTO> {
+    const [entities, count] = await this.deviceService.list();
+    return new PagedDataDTO(count, entities);
   }
 }

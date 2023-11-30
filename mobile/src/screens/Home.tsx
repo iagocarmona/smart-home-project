@@ -1,149 +1,69 @@
-import { useEffect, useState } from 'react'
-import { Alert } from 'react-native'
-import auth from '@react-native-firebase/auth'
-import { useNavigation } from '@react-navigation/native'
-import {
-  Heading,
-  HStack,
-  IconButton,
-  Text,
-  useTheme,
-  VStack,
-  FlatList,
-  Center,
-} from 'native-base'
+import React from "react";
+import { Box, FlatList, HStack, Heading, VStack } from "native-base";
+import DeviceCard from "../components/DeviceCard";
 
-import firestore from '@react-native-firebase/firestore'
-import { dateFormat } from '../utils/firestoreDateFormat'
+const devices = [
+  {
+    id: 1,
+    title: "Lâmpada",
+    icon: "lightbulb-o",
+    isActive: true,
+  },
+  {
+    id: 2,
+    title: "Ar-condicionado",
+    icon: "snow-outline",
+    isActive: true,
+  },
+  {
+    id: 3,
+    title: "Televisão",
+    icon: "tv-outline",
+    isActive: false,
+  },
+  {
+    id: 4,
+    title: "Cafeteira",
+    icon: "coffee",
+    isActive: false,
+  },
+  {
+    id: 6,
+    title: "Computador",
+    icon: "desktop-outline",
+    isActive: true,
+  },
+];
 
-// Components
-import { Filter } from '../components/Filter'
-import { Button } from '../components/Button'
-import { Order, OrderProps } from '../components/Order'
-import { Loading } from '../components/Loading'
-
-import { SignOut } from 'phosphor-react-native'
-import Logo from '../assets/logo_secondary.svg'
-import { ChatTeardropText } from 'phosphor-react-native'
-
-export function Home() {
-  const [isLoading, setIsLoading] = useState(true)
-  const [statusSelected, setStatusSelected] = useState<'open' | 'closed'>(
-    'open'
-  )
-  const [orders, setOrders] = useState<OrderProps[]>([])
-  const { colors } = useTheme()
-
-  const navigation = useNavigation()
-
-  function handleNewOrder() {
-    navigation.navigate('new')
-  }
-
-  function handleOpenDetails(orderId: string) {
-    navigation.navigate('details', { orderId })
-  }
-
-  function handleLogout() {
-    auth()
-      .signOut()
-      .catch((error) => {
-        console.log(error)
-        return Alert.alert('Sair', 'Não foi possível sair.')
-      })
-  }
-
-  useEffect(() => {
-    setIsLoading(true)
-    const subscriber = firestore()
-      .collection('orders')
-      .where('status', '==', statusSelected)
-      .onSnapshot((snapshot) => {
-        const data = snapshot.docs.map((doc) => {
-          const { patrimony, description, status, createdAt } = doc.data()
-
-          return {
-            id: doc.id,
-            patrimony,
-            description,
-            status,
-            when: dateFormat(createdAt),
-          }
-        })
-
-        setOrders(data)
-        setIsLoading(false)
-      })
-    return subscriber
-  }, [statusSelected])
-
+export const Home = () => {
   return (
-    <VStack flex={1} pb={6} bg="gray.700">
+    <VStack flex={1} pb={6} pt={60} pl={6} pr={6} bg="gray.700">
       <HStack
         w="full"
-        justifyContent="space-between"
+        h={10}
+        display="flex"
+        flexDirection="row"
         alignItems="center"
-        bg="gray.600"
-        pt={12}
-        pb={5}
-        px={6}
       >
-        <Logo />
-        <IconButton
-          icon={<SignOut size={26} color={colors.gray[300]} />}
-          onPress={handleLogout}
-        />
+        <Heading color="white" fontSize="4xl">
+          Dispositivos
+        </Heading>
       </HStack>
-      <VStack flex={1} px={6}>
-        <HStack
-          w="full"
-          mt={8}
-          mb={4}
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Heading color="gray.100">Solicitações</Heading>
-          <Text color="gray.200">{orders.length}</Text>
-        </HStack>
-        <HStack space={3} mb={8}>
-          <Filter
-            type="open"
-            title="Em andamento"
-            onPress={() => setStatusSelected('open')}
-            isActive={statusSelected === 'open'}
-          />
-          <Filter
-            type="closed"
-            title="Finalizados"
-            onPress={() => setStatusSelected('closed')}
-            isActive={statusSelected === 'closed'}
-          />
-        </HStack>
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <FlatList
-            data={orders}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <Order data={item} onPress={() => handleOpenDetails(item.id)} />
-            )}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 100 }}
-            ListEmptyComponent={() => (
-              <Center>
-                <ChatTeardropText color={colors.gray[300]} size={40} />
-                <Text color="gray.300" fontSize="xl" mt={6} textAlign="center">
-                  Você ainda não possui {'\n'}
-                  solicitações{' '}
-                  {statusSelected === 'open' ? 'em andamento' : 'finalizadas'}
-                </Text>
-              </Center>
-            )}
+      <FlatList
+        data={devices}
+        mt={4}
+        ItemSeparatorComponent={() => <Box h={2} />}
+        keyExtractor={(item) => String(item.id)}
+        renderItem={({ item }) => (
+          <DeviceCard
+            key={item.id}
+            title={item.title}
+            icon={item.icon}
+            isActive={item.isActive}
+            deviceId={item.id}
           />
         )}
-        <Button title="Nova solicitação" onPress={handleNewOrder} mt={3} />
-      </VStack>
+      />
     </VStack>
-  )
-}
+  );
+};

@@ -1,0 +1,7 @@
+.vscode
+
+mobile/node_modules
+
+server/node_modules
+server/data
+server/dist
