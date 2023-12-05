@@ -12,7 +12,7 @@ export class DeviceEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', name: 'name', unique: true })
+  @Column({ type: 'varchar', name: 'name' })
   name: string;
 
   @Column({ type: 'varchar', name: 'description' })
