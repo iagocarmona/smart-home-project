@@ -9,6 +9,7 @@ import { DeviceEntity } from '../entities/device.entity';
 import { DeviceCreateDTO, DeviceUpdateDTO } from './device.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { BaseRedisKeys } from 'src/helpers/redis';
 
 @Injectable()
 export class DeviceService {
@@ -24,7 +25,7 @@ export class DeviceService {
       throw new BadRequestException('Device already exists. Try another name');
     }
 
-    await this.cacheManager.del('devices');
+    await this.cacheManager.del(BaseRedisKeys.DEVICES);
 
     return await this.repository.save(device);
   }
@@ -32,7 +33,7 @@ export class DeviceService {
   async list(): Promise<[DeviceEntity[], number]> {
     const devices = await this.repository.list();
 
-    await this.cacheManager.set('devices', devices);
+    await this.cacheManager.set(BaseRedisKeys.DEVICES, devices);
 
     return devices;
   }
@@ -54,7 +55,7 @@ export class DeviceService {
       throw new NotFoundException('Device not found');
     }
 
-    await this.cacheManager.del('devices');
+    await this.cacheManager.del(BaseRedisKeys.DEVICES);
 
     await this.repository.update(device.id, device);
     return await this.getById(device.id);
@@ -67,7 +68,7 @@ export class DeviceService {
       throw new NotFoundException('Device not found');
     }
 
-    await this.cacheManager.del('devices');
+    await this.cacheManager.del(BaseRedisKeys.DEVICES);
 
     await this.repository.softDelete(id);
 
