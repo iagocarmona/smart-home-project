@@ -48,13 +48,15 @@ export class DeviceController {
   }
 
   @Post('/activate/:id')
-  async activate(@Param('id') id: number): Promise<ResponseDTO> {
+  async activate(@Param('id', ParseIntPipe) id: number): Promise<ResponseDTO> {
     const activatedDevice = await this.deviceService.activate(id);
     return new ResponseDTO('Successfully activated', activatedDevice);
   }
 
   @Post('/deactivate/:id')
-  async deactivate(@Param('id') id: number): Promise<ResponseDTO> {
+  async deactivate(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ResponseDTO> {
     const deactivatedDevice = await this.deviceService.deactivate(id);
     return new ResponseDTO('Successfully deactivated', deactivatedDevice);
   }

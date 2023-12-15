@@ -18,6 +18,9 @@ export class DeviceEntity {
   @Column({ type: 'varchar', name: 'description' })
   description: string;
 
+  @Column({ type: 'integer', name: 'device_type_id' })
+  deviceTypeId: number;
+
   @Column({ type: 'boolean', name: 'is_active', default: true })
   isActive: boolean;
 

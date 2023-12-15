@@ -1,41 +1,53 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, FlatList, HStack, Heading, VStack } from "native-base";
 import DeviceCard from "../components/DeviceCard";
+import { DeviceDTO } from "../DTO/device.dto";
 
-const devices = [
+const devicesMock: DeviceDTO[] = [
   {
     id: 1,
-    title: "Lâmpada",
-    icon: "lightbulb-o",
+    name: "Lâmpada",
+    description: "Lâmpada do quarto",
+    // icon: "lightbulb-o",
     isActive: true,
   },
   {
     id: 2,
-    title: "Ar-condicionado",
-    icon: "snow-outline",
+    name: "Ar-condicionado",
+    description: "Ar-condicionado do quarto",
+    // icon: "snow-outline",
     isActive: true,
   },
   {
     id: 3,
-    title: "Televisão",
-    icon: "tv-outline",
+    name: "Televisão",
+    description: "Televisão do quarto",
+    // icon: "tv-outline",
     isActive: false,
   },
   {
     id: 4,
-    title: "Cafeteira",
-    icon: "coffee",
+    name: "Cafeteira",
+    description: "Cafeteira do quarto",
+    // icon: "coffee",
     isActive: false,
   },
   {
     id: 6,
-    title: "Computador",
-    icon: "desktop-outline",
+    name: "Computador",
+    description: "Computador do quarto",
+    // icon: "desktop-outline",
     isActive: true,
   },
 ];
 
 export const Home = () => {
+  const [devices, setDevices] = useState<DeviceDTO[]>();
+
+  useEffect(() => {
+    setDevices(devicesMock);
+  }, []);
+
   return (
     <VStack flex={1} pb={6} pt={60} pl={6} pr={6} bg="gray.700">
       <HStack
@@ -57,8 +69,8 @@ export const Home = () => {
         renderItem={({ item }) => (
           <DeviceCard
             key={item.id}
-            title={item.title}
-            icon={item.icon}
+            title={item.name}
+            icon="desktop-outline"
             isActive={item.isActive}
             deviceId={item.id}
           />

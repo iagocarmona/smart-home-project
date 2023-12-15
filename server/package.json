@@ -19,9 +19,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migrate:create": "typeorm-ts-node-commonjs migration:create",
-    "migrate:run": "typeorm-ts-node-commonjs migration:run -d ./src/config/dataSource.ts",
-    "migrate:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert -d ./src/config/dataSource.ts",
-    "migrate:show": "ts-node ./node_modules/typeorm/cli.js migration:show -d ./src/config/dataSource.ts"
+    "migrate:run": "typeorm-ts-node-commonjs migration:run -d ./src/configs/dataSource.ts",
+    "migrate:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert -d ./src/configs/dataSource.ts",
+    "migrate:show": "ts-node ./node_modules/typeorm/cli.js migration:show -d ./src/configs/dataSource.ts"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "1.9.1",

@@ -17,6 +17,9 @@ export class DeviceUpdateDTO {
   @IsString()
   description: string;
 
+  @IsInt()
+  deviceTypeId: number;
+
   @IsBoolean()
   isActive: boolean;
 }
@@ -27,6 +30,9 @@ export class DeviceCreateDTO {
 
   @IsString()
   description: string;
+
+  @IsInt()
+  deviceTypeId: number;
 
   @IsBoolean()
   isActive: boolean;
