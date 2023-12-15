@@ -9,9 +9,9 @@ import {
   Put,
 } from '@nestjs/common';
 import { DeviceService } from './device.service';
-import { PagedDataDTO } from 'src/DTOs/pagedDataDTO';
-import { ResponseDTO } from 'src/DTOs/responseDTO';
 import { DeviceCreateDTO, DeviceUpdateDTO } from './device.dto';
+import { ResponseDTO } from 'src/DTOs/response.dto';
+import { PagedDataDTO } from 'src/DTOs/pagedData.dto';
 
 @Controller('devices')
 export class DeviceController {
@@ -45,5 +45,17 @@ export class DeviceController {
   async delete(@Param('id', ParseIntPipe) id: number): Promise<ResponseDTO> {
     const deletedDevice = await this.deviceService.delete(id);
     return new ResponseDTO('Successfully deleted', deletedDevice);
+  }
+
+  @Post('/activate/:id')
+  async activate(@Param('id') id: number): Promise<ResponseDTO> {
+    const activatedDevice = await this.deviceService.activate(id);
+    return new ResponseDTO('Successfully activated', activatedDevice);
+  }
+
+  @Post('/deactivate/:id')
+  async deactivate(@Param('id') id: number): Promise<ResponseDTO> {
+    const deactivatedDevice = await this.deviceService.deactivate(id);
+    return new ResponseDTO('Successfully deactivated', deactivatedDevice);
   }
 }

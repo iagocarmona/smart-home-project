@@ -10,12 +10,15 @@ import { DeviceCreateDTO, DeviceUpdateDTO } from './device.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { BaseRedisKeys } from 'src/helpers/redis';
+import { MqttService } from 'src/MQTT/mqtt.service';
+import { PubMQTTDTO } from 'src/DTOs/pubMQTT.dto';
 
 @Injectable()
 export class DeviceService {
   constructor(
     @Inject(DeviceRepository) private readonly repository: DeviceRepository,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    @Inject(MqttService) private readonly mqttService: MqttService,
   ) {}
 
   async create(device: DeviceCreateDTO): Promise<DeviceEntity> {
@@ -31,6 +34,14 @@ export class DeviceService {
   }
 
   async list(): Promise<[DeviceEntity[], number]> {
+    const cachedDevices: DeviceEntity[] = await this.cacheManager.get(
+      BaseRedisKeys.DEVICES,
+    );
+
+    if (cachedDevices) {
+      return [cachedDevices, cachedDevices.length];
+    }
+
     const devices = await this.repository.list();
 
     await this.cacheManager.set(BaseRedisKeys.DEVICES, devices);
@@ -73,5 +84,67 @@ export class DeviceService {
     await this.repository.softDelete(id);
 
     return device;
+  }
+
+  async activate(deviceId: number): Promise<DeviceEntity> {
+    const deviceEntity = await this.repository.getById(deviceId);
+
+    if (!deviceEntity) {
+      throw new NotFoundException('Device not found');
+    }
+
+    if (deviceEntity.isActive) {
+      throw new BadRequestException('Device is already active');
+    }
+
+    deviceEntity.isActive = true;
+
+    await this.cacheManager.del(BaseRedisKeys.DEVICES);
+
+    await this.repository.save(deviceEntity);
+
+    const topic = `devices/${deviceId}`;
+
+    const mqttDTO = new PubMQTTDTO(
+      deviceEntity.id,
+      'Device activated',
+      deviceEntity.name,
+      deviceEntity.isActive,
+    );
+
+    this.mqttService.publish(topic, mqttDTO);
+
+    return deviceEntity;
+  }
+
+  async deactivate(deviceId: number): Promise<DeviceEntity> {
+    const deviceEntity = await this.repository.getById(deviceId);
+
+    if (!deviceEntity) {
+      throw new NotFoundException('Device not found');
+    }
+
+    if (!deviceEntity.isActive) {
+      throw new BadRequestException('Device already deactivated');
+    }
+
+    deviceEntity.isActive = false;
+
+    await this.cacheManager.del(BaseRedisKeys.DEVICES);
+
+    await this.repository.save(deviceEntity);
+
+    const topic = `devices/${deviceId}`;
+
+    const mqttDTO = new PubMQTTDTO(
+      deviceEntity.id,
+      'Device deactivated',
+      deviceEntity.name,
+      deviceEntity.isActive,
+    );
+
+    this.mqttService.publish(topic, mqttDTO);
+
+    return deviceEntity;
   }
 }
