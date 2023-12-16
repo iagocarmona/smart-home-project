@@ -1,11 +1,26 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { IDevice } from "../interfaces/device.interface";
+import { ApiResponse } from "../interfaces/api.interface";
 
 export class DeviceController {
   private apiUrl: string;
 
   constructor() {
     this.apiUrl = process.env.API_BASE_URL;
+  }
+
+  async create(device: IDevice): Promise<IDevice> {
+    try {
+      const response: AxiosResponse<ApiResponse> = axios.post(`${this.apiUrl}/`, {
+        data: { ...device },
+      });
+
+      const deviceCreated: IDevice = response.data.data;
+
+      return deviceCreated;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async getAll() {

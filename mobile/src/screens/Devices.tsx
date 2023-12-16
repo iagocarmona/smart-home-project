@@ -41,7 +41,7 @@ const devicesMock: DeviceDTO[] = [
   },
 ];
 
-export const Home = () => {
+export const Devices = () => {
   const [devices, setDevices] = useState<DeviceDTO[]>();
 
   useEffect(() => {
