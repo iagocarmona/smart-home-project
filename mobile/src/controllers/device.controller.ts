@@ -1,21 +1,25 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import  { AxiosResponse } from "axios";
 import { IDevice } from "../interfaces/device.interface";
 import { ApiResponse } from "../interfaces/api.interface";
+import api from "../config/api.config";
+import { DeviceDTO } from "../DTO/device.dto";
 
 export class DeviceController {
   private apiUrl: string;
+  private alias: string
 
   constructor() {
-    this.apiUrl = process.env.API_BASE_URL;
+    this.apiUrl = "http://192.168.237.88:3000";
+    this.alias = "/devices";
   }
 
-  async create(device: IDevice): Promise<IDevice> {
+  async create(device: IDevice): Promise<DeviceDTO> {
     try {
-      const response: AxiosResponse<ApiResponse> = axios.post(`${this.apiUrl}/`, {
+      const response: AxiosResponse<ApiResponse> = await api.post(`${this.apiUrl}${this.alias}/`, {
         data: { ...device },
       });
 
-      const deviceCreated: IDevice = response.data.data;
+      const deviceCreated: DeviceDTO = response.data.data;
 
       return deviceCreated;
     } catch (error) {
@@ -23,10 +27,13 @@ export class DeviceController {
     }
   }
 
-  async getAll() {
+  async getAll(): Promise<DeviceDTO[]> {
     try {
-      const result = axios.get(`${this.apiUrl}/`);
-      return result;
+      const url = `${this.apiUrl}${this.alias}/`
+      const response: AxiosResponse<ApiResponse> = await api.get(url);
+      const devices: DeviceDTO[] = response.data.data
+
+      return devices;
     } catch (error) {
       console.log(error);
     }
@@ -34,7 +41,7 @@ export class DeviceController {
 
   async getById(id: number) {
     try {
-      const result = axios.get(`${this.apiUrl}/${id}`);
+      const result: AxiosResponse<ApiResponse> = await api.get(`${this.apiUrl}${this.alias}/${id}`);
       return result;
     } catch (error) {
       console.log(error);
@@ -43,10 +50,28 @@ export class DeviceController {
 
   async update(device: IDevice) {
     try {
-      const result = axios.put(`${this.apiUrl}/`, {
+      const result: AxiosResponse<ApiResponse> = await api.put(`${this.apiUrl}${this.alias}/`, {
         data: { ...device },
       });
 
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async active(deviceId: number) {
+    try {
+      const result: AxiosResponse<ApiResponse> = await api.put(`${this.apiUrl}${this.alias}/active/${deviceId}`);
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async deactive(deviceId: number) {
+    try {
+      const result: AxiosResponse<ApiResponse> = await api.put(`${this.apiUrl}${this.alias}/deactive/${deviceId}`);
       return result;
     } catch (error) {
       console.log(error);

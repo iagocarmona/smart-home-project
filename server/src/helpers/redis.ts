@@ -1,4 +1,4 @@
 export enum BaseRedisKeys {
   DEVICES = 'devices',
-  USERS = 'users',
+  TYPES = 'device_types',
 }

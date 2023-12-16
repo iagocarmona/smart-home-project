@@ -1,11 +1,11 @@
-import React from "react";
+import React, { memo } from "react";
 import { Box, Divider, Icon, Switch, Text, View } from "native-base";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import { DeviceController } from "../controllers/device.controller";
 
 type Props = {
   title: string;
-  icon: string;
+  deviceTypeId: number;
   isActive?: boolean;
   children?: React.ReactNode;
   deviceId: number;
@@ -15,7 +15,7 @@ const iconsFA = ["lightbulb-o", "coffee"];
 
 const DeviceCard = ({
   title,
-  icon,
+  deviceTypeId,
   isActive,
   children,
   deviceId,
@@ -25,17 +25,24 @@ const DeviceCard = ({
 
   const handleActiveDevice = async (deviceId: number) => {
     try {
-      const data = await deviceController.update({
-        id: deviceId,
-        isActive: true,
-      });
+      const data = await deviceController.active(deviceId);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const handleDeactivateDevice = async (deviceId: number) => {
+    try {
+      const data = await deviceController.deactive(deviceId);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getIconByDeviceTypeId = async (deviceTypeId: number) => {};
+
   return (
-    <Box bg="gray.600" rounded="md" py={4} w="100%" flexDirection="row">
+    <Box bg="gray.700" rounded="md" py={4} w="100%" flexDirection="row">
       <Box
         position="absolute"
         bottom={2}
@@ -64,7 +71,11 @@ const DeviceCard = ({
       </View>
       <Switch
         isChecked={isActive}
-        onToggle={() => handleActiveDevice(deviceId)}
+        onToggle={() =>
+          isActive
+            ? handleDeactivateDevice(deviceId)
+            : handleDeactivateDevice(deviceId)
+        }
         size="md"
         colorScheme="green"
         position="absolute"
@@ -75,4 +86,4 @@ const DeviceCard = ({
   );
 };
 
-export default DeviceCard;
+export default memo(DeviceCard);

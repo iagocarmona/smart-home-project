@@ -29,6 +29,12 @@ export class DeviceController {
     return new PagedDataDTO(count, entities);
   }
 
+  @Get('types')
+  async getTypes(): Promise<PagedDataDTO> {
+    const [entities, count] = await this.deviceService.getTypes();
+    return new PagedDataDTO(count, entities);
+  }
+
   @Get(':id')
   async get(@Param('id', ParseIntPipe) id: number): Promise<ResponseDTO> {
     const device = await this.deviceService.getById(id);

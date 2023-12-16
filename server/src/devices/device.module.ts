@@ -6,10 +6,20 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DeviceEntity } from '../entities/device.entity';
 import { RedisModule } from 'src/configs/redisModule';
 import { MqttService } from 'src/MQTT/mqtt.service';
+import { DeviceTypesEntity } from 'src/entities/deviceType.entity';
+import { DeviceTypesRepository } from './deviceType.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([DeviceEntity]), RedisModule],
+  imports: [
+    TypeOrmModule.forFeature([DeviceEntity, DeviceTypesEntity]),
+    RedisModule,
+  ],
   controllers: [DeviceController],
-  providers: [DeviceService, DeviceRepository, MqttService],
+  providers: [
+    DeviceService,
+    DeviceRepository,
+    MqttService,
+    DeviceTypesRepository,
+  ],
 })
 export class DeviceModule {}

@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Devices } from "../screens/Devices";
-import { Routes } from "../utils/enums";
+import { RoutesEnum } from "../utils/enums";
 import { CreateDevice } from "../screens/CreateDevice";
 
 const { Navigator, Screen } = createNativeStackNavigator();
@@ -8,8 +8,8 @@ const { Navigator, Screen } = createNativeStackNavigator();
 export function AppRoutes() {
   return (
     <Navigator screenOptions={{ headerShown: false }}>
-      <Screen name={Routes.Devices} component={CreateDevice} />
-      {/* <Screen name={Routes.CreateDevice} component={SignIn} /> */}
+      <Screen name={RoutesEnum.Devices} component={Devices} />
+      <Screen name={RoutesEnum.CreateDevice} component={CreateDevice} />
     </Navigator>
   );
 }

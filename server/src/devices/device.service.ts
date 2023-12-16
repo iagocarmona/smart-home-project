@@ -12,11 +12,15 @@ import { Cache } from 'cache-manager';
 import { BaseRedisKeys } from 'src/helpers/redis';
 import { MqttService } from 'src/MQTT/mqtt.service';
 import { PubMQTTDTO } from 'src/DTOs/pubMQTT.dto';
+import { DeviceTypesEntity } from 'src/entities/deviceType.entity';
+import { DeviceTypesRepository } from './deviceType.repository';
 
 @Injectable()
 export class DeviceService {
   constructor(
     @Inject(DeviceRepository) private readonly repository: DeviceRepository,
+    @Inject(DeviceTypesRepository)
+    private readonly typesRepository: DeviceTypesRepository,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @Inject(MqttService) private readonly mqttService: MqttService,
   ) {}
@@ -44,9 +48,25 @@ export class DeviceService {
 
     const devices = await this.repository.list();
 
-    await this.cacheManager.set(BaseRedisKeys.DEVICES, devices);
+    await this.cacheManager.set(BaseRedisKeys.DEVICES, devices[0]);
 
     return devices;
+  }
+
+  async getTypes(): Promise<[DeviceTypesEntity[], number]> {
+    const cachedTypes: DeviceTypesEntity[] = await this.cacheManager.get(
+      BaseRedisKeys.TYPES,
+    );
+
+    if (cachedTypes) {
+      return [cachedTypes, cachedTypes.length];
+    }
+
+    const types = await this.typesRepository.list();
+
+    await this.cacheManager.set(BaseRedisKeys.TYPES, types[0]);
+
+    return types;
   }
 
   async getById(id: number): Promise<DeviceEntity> {

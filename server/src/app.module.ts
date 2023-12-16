@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DeviceModule } from './devices/device.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DeviceEntity } from './entities/device.entity';
+import { DeviceTypesEntity } from './entities/deviceType.entity';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { DeviceEntity } from './entities/device.entity';
       username: 'postgres',
       password: 'postgres',
       database: 'smarthome',
-      entities: [DeviceEntity],
+      entities: [DeviceEntity, DeviceTypesEntity],
       synchronize: true,
     }),
     MongooseModule.forRoot('mongodb://localhost:27017', {

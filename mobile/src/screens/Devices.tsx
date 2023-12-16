@@ -1,76 +1,79 @@
-import React, { useEffect, useState } from "react";
-import { Box, FlatList, HStack, Heading, VStack } from "native-base";
-import DeviceCard from "../components/DeviceCard";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  Box,
+  FlatList,
+  HStack,
+  Heading,
+  Icon,
+  VStack,
+  useTheme,
+} from "native-base";
+import { PlusCircle } from "phosphor-react-native";
+import { useNavigation } from "@react-navigation/native";
+import { RoutesEnum } from "../utils/enums";
+import { TouchableOpacity } from "react-native";
+import { DeviceController } from "../controllers/device.controller";
 import { DeviceDTO } from "../DTO/device.dto";
-
-const devicesMock: DeviceDTO[] = [
-  {
-    id: 1,
-    name: "Lâmpada",
-    description: "Lâmpada do quarto",
-    // icon: "lightbulb-o",
-    isActive: true,
-  },
-  {
-    id: 2,
-    name: "Ar-condicionado",
-    description: "Ar-condicionado do quarto",
-    // icon: "snow-outline",
-    isActive: true,
-  },
-  {
-    id: 3,
-    name: "Televisão",
-    description: "Televisão do quarto",
-    // icon: "tv-outline",
-    isActive: false,
-  },
-  {
-    id: 4,
-    name: "Cafeteira",
-    description: "Cafeteira do quarto",
-    // icon: "coffee",
-    isActive: false,
-  },
-  {
-    id: 6,
-    name: "Computador",
-    description: "Computador do quarto",
-    // icon: "desktop-outline",
-    isActive: true,
-  },
-];
+import DeviceCard from "../components/DeviceCard";
 
 export const Devices = () => {
   const [devices, setDevices] = useState<DeviceDTO[]>();
 
+  const { colors } = useTheme();
+  const navigation = useNavigation();
+
+  const deviceController = new DeviceController();
+
+  const handleNavigateCreateDevices = () => {
+    navigation.navigate(RoutesEnum.CreateDevice);
+  };
+
+  const handleFetchDevices = useCallback(async () => {
+    try {
+      const data: DeviceDTO[] = await deviceController.getAll();
+
+      console.log("DATAAAA ", data);
+
+      if (data) {
+        setDevices(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [setDevices]);
+
   useEffect(() => {
-    setDevices(devicesMock);
+    handleFetchDevices();
   }, []);
 
   return (
-    <VStack flex={1} pb={6} pt={60} pl={6} pr={6} bg="gray.700">
+    <VStack flex={1} pb={6} pt={60} pl={6} pr={6} bg="gray.600">
       <HStack
         w="full"
         h={10}
         display="flex"
         flexDirection="row"
         alignItems="center"
+        justifyContent="space-between"
       >
         <Heading color="white" fontSize="4xl">
           Dispositivos
         </Heading>
+        <TouchableOpacity onPress={handleNavigateCreateDevices}>
+          <Icon as={<PlusCircle color={colors.green[300]} size={32} />} />
+        </TouchableOpacity>
       </HStack>
       <FlatList
         data={devices}
         mt={4}
         ItemSeparatorComponent={() => <Box h={2} />}
+        showsVerticalScrollIndicator={false}
         keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => (
           <DeviceCard
             key={item.id}
             title={item.name}
-            icon="desktop-outline"
+            deviceTypeId={item.deviceTypeId}
             isActive={item.isActive}
             deviceId={item.id}
           />
