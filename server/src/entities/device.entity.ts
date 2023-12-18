@@ -24,6 +24,9 @@ export class DeviceEntity {
   @Column({ type: 'boolean', name: 'is_active', default: true })
   isActive: boolean;
 
+  @Column({ type: 'varchar', name: 'topic', nullable: true })
+  topic: string;
+
   @CreateDateColumn({
     type: 'timestamp with time zone',
     default: () => 'CURRENT_TIMESTAMP',

@@ -9,7 +9,7 @@ import {
   useTheme,
 } from "native-base";
 import { PlusCircle } from "phosphor-react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { RoutesEnum } from "../utils/enums";
 import { TouchableOpacity } from "react-native";
 import { DeviceController } from "../controllers/device.controller";
@@ -32,8 +32,6 @@ export const Devices = () => {
     try {
       const data: DeviceDTO[] = await deviceController.getAll();
 
-      console.log("DATAAAA ", data);
-
       if (data) {
         setDevices(data);
       }
@@ -42,9 +40,11 @@ export const Devices = () => {
     }
   }, [setDevices]);
 
-  useEffect(() => {
-    handleFetchDevices();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      handleFetchDevices();
+    }, [devices])
+  );
 
   return (
     <VStack flex={1} pb={6} pt={60} pl={6} pr={6} bg="gray.600">
@@ -59,7 +59,7 @@ export const Devices = () => {
         <Heading color="white" fontSize="4xl">
           Dispositivos
         </Heading>
-        <TouchableOpacity onPress={handleNavigateCreateDevices}>
+        <TouchableOpacity onPress={handleNavigateCreateDevices} hitSlop={20}>
           <Icon as={<PlusCircle color={colors.green[300]} size={32} />} />
         </TouchableOpacity>
       </HStack>
@@ -76,6 +76,7 @@ export const Devices = () => {
             deviceTypeId={item.deviceTypeId}
             isActive={item.isActive}
             deviceId={item.id}
+            topic={item.topic}
           />
         )}
       />

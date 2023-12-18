@@ -9,15 +9,14 @@ export class DeviceController {
   private alias: string
 
   constructor() {
-    this.apiUrl = "http://192.168.237.88:3000";
+    this.apiUrl = "http://192.168.1.12:3000";
     this.alias = "/devices";
   }
 
   async create(device: IDevice): Promise<DeviceDTO> {
     try {
-      const response: AxiosResponse<ApiResponse> = await api.post(`${this.apiUrl}${this.alias}/`, {
-        data: { ...device },
-      });
+      const url = `${this.apiUrl}${this.alias}/`
+      const response: AxiosResponse<ApiResponse> = await api.post(url, { ...device });
 
       const deviceCreated: DeviceDTO = response.data.data;
 
@@ -48,6 +47,15 @@ export class DeviceController {
     }
   }
 
+  async getAllDeviceTypes() {
+    try {
+      const result: AxiosResponse<ApiResponse> = await api.get(`${this.apiUrl}${this.alias}/types`);
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async update(device: IDevice) {
     try {
       const result: AxiosResponse<ApiResponse> = await api.put(`${this.apiUrl}${this.alias}/`, {
@@ -62,7 +70,7 @@ export class DeviceController {
 
   async active(deviceId: number) {
     try {
-      const result: AxiosResponse<ApiResponse> = await api.put(`${this.apiUrl}${this.alias}/active/${deviceId}`);
+      const result: AxiosResponse<ApiResponse> = await api.post(`${this.apiUrl}${this.alias}/activate/${deviceId}`);
       return result;
     } catch (error) {
       console.log(error);
@@ -71,7 +79,7 @@ export class DeviceController {
 
   async deactive(deviceId: number) {
     try {
-      const result: AxiosResponse<ApiResponse> = await api.put(`${this.apiUrl}${this.alias}/deactive/${deviceId}`);
+      const result: AxiosResponse<ApiResponse> = await api.post(`${this.apiUrl}${this.alias}/deactivate/${deviceId}`);
       return result;
     } catch (error) {
       console.log(error);

@@ -4,6 +4,7 @@ export interface DeviceDTO {
     description: string;
     deviceTypeId: number;
     isActive: boolean;
+    topic?: string;
     createdAt: Date;
     updatedAt: Date;
     deletedAt: Date;

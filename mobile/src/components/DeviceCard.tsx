@@ -1,20 +1,21 @@
 import React, { memo } from "react";
-import { Box, Divider, Icon, Switch, Text, View } from "native-base";
-import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import { Box, Divider, Icon, Switch, Text, View, useTheme } from "native-base";
 import { DeviceController } from "../controllers/device.controller";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { DeviceTypeIcons, DeviceTypes } from "../utils/enums";
 
 type Props = {
   title: string;
+  topic?: string;
   deviceTypeId: number;
   isActive?: boolean;
   children?: React.ReactNode;
   deviceId: number;
 };
 
-const iconsFA = ["lightbulb-o", "coffee"];
-
 const DeviceCard = ({
   title,
+  topic,
   deviceTypeId,
   isActive,
   children,
@@ -23,9 +24,11 @@ const DeviceCard = ({
 }: Props) => {
   const deviceController = new DeviceController();
 
+  const { colors } = useTheme();
+
   const handleActiveDevice = async (deviceId: number) => {
     try {
-      const data = await deviceController.active(deviceId);
+      await deviceController.active(deviceId);
     } catch (error) {
       console.log(error);
     }
@@ -33,13 +36,15 @@ const DeviceCard = ({
 
   const handleDeactivateDevice = async (deviceId: number) => {
     try {
-      const data = await deviceController.deactive(deviceId);
+      await deviceController.deactive(deviceId);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const getIconByDeviceTypeId = async (deviceTypeId: number) => {};
+  const getIconByDeviceTypeId = (deviceTypeId: number) => {
+    return DeviceTypeIcons[DeviceTypes[deviceTypeId]];
+  };
 
   return (
     <Box bg="gray.700" rounded="md" py={4} w="100%" flexDirection="row">
@@ -56,13 +61,13 @@ const DeviceCard = ({
         <Text color="white" fontSize="lg">
           {title}
         </Text>
-        <Icon
-          as={iconsFA.includes(icon) ? FontAwesome : Ionicons}
-          name={icon}
-          color="white"
-          size={16}
-          mt={2}
-          marginLeft={icon === "lightbulb-o" ? 6 : 0}
+        <Text color="gray.300" fontSize={16}>
+          tópico: {topic}
+        </Text>
+        <MaterialCommunityIcons
+          name={getIconByDeviceTypeId(deviceTypeId)}
+          size={64}
+          color={colors.gray[300]}
         />
       </View>
       <Divider orientation="vertical" bg="gray.400" />
@@ -74,7 +79,7 @@ const DeviceCard = ({
         onToggle={() =>
           isActive
             ? handleDeactivateDevice(deviceId)
-            : handleDeactivateDevice(deviceId)
+            : handleActiveDevice(deviceId)
         }
         size="md"
         colorScheme="green"

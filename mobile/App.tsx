@@ -1,5 +1,5 @@
 import React from "react";
-import { NativeBaseProvider, StatusBar, Text } from "native-base";
+import { NativeBaseProvider, StatusBar } from "native-base";
 import {
   useFonts,
   Roboto_400Regular,

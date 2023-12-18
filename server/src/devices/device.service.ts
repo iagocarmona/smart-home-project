@@ -34,7 +34,12 @@ export class DeviceService {
 
     await this.cacheManager.del(BaseRedisKeys.DEVICES);
 
-    return await this.repository.save(device);
+    const createdDevice = await this.repository.save(device);
+    createdDevice.topic = `devices/${createdDevice.id}`;
+
+    const updatedDevice = await this.update(createdDevice);
+
+    return updatedDevice;
   }
 
   async list(): Promise<[DeviceEntity[], number]> {
