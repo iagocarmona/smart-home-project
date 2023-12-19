@@ -39,3 +39,6 @@
 - Remover membros do grupo
 - Listar membros do grupo
 - Comunicar com sensores
+
+  ## Documentação das interfaces de comunicação
+  https://documenter.getpostman.com/view/27080873/2s9YkocLxQ
