@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Box,
   FlatList,
   HStack,
   Heading,
   Icon,
+  Text,
   VStack,
   useTheme,
 } from "native-base";
@@ -57,7 +58,7 @@ export const Devices = () => {
         justifyContent="space-between"
       >
         <Heading color="white" fontSize="4xl">
-          Dispositivos
+          Dispositivos <Text fontSize={16}>({devices?.length})</Text>
         </Heading>
         <TouchableOpacity onPress={handleNavigateCreateDevices} hitSlop={20}>
           <Icon as={<PlusCircle color={colors.green[300]} size={32} />} />

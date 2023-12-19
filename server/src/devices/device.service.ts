@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { DeviceRepository } from './device.repository';
 import { DeviceEntity } from '../entities/device.entity';
-import { DeviceCreateDTO, DeviceUpdateDTO } from './device.dto';
+import { DeviceCreateDTO, DeviceUpdateDTO, IDeviceMongo } from './device.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { BaseRedisKeys } from 'src/helpers/redis';
@@ -14,6 +14,9 @@ import { MqttService } from 'src/MQTT/mqtt.service';
 import { PubMQTTDTO } from 'src/DTOs/pubMQTT.dto';
 import { DeviceTypesEntity } from 'src/entities/deviceType.entity';
 import { DeviceTypesRepository } from './deviceType.repository';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Device } from './device.schema';
 
 @Injectable()
 export class DeviceService {
@@ -23,6 +26,7 @@ export class DeviceService {
     private readonly typesRepository: DeviceTypesRepository,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @Inject(MqttService) private readonly mqttService: MqttService,
+    @InjectModel(Device.name) private devicesModel: Model<IDeviceMongo>,
   ) {}
 
   async create(device: DeviceCreateDTO): Promise<DeviceEntity> {
@@ -171,5 +175,50 @@ export class DeviceService {
     this.mqttService.publish(topic, mqttDTO);
 
     return deviceEntity;
+  }
+
+  async getPorcentageDayActive(
+    deviceId: number,
+  ): Promise<{ percentage: number; hoursActive: number }> {
+    const currentDate = new Date();
+    const startDate = new Date(currentDate);
+    startDate.setHours(0, 0, 0, 0);
+
+    const endDate = new Date(currentDate);
+    endDate.setHours(23, 59, 59, 999);
+
+    const deviceData = await this.devicesModel
+      .find({
+        deviceId: deviceId,
+        timeStamp: { $gte: startDate, $lte: endDate },
+      })
+      .sort({ timeStamp: 1 }); // Ordena por timeStamp em ordem crescente
+
+    if (!deviceData || deviceData.length === 0) {
+      throw new NotFoundException(
+        'Device data not found for the specified deviceId and date range.',
+      );
+    }
+
+    let totalActiveTime = 0;
+    let lastActiveTime = startDate.getTime();
+
+    for (const data of deviceData) {
+      if (data.isActive) {
+        lastActiveTime = data.timeStamp.getTime();
+      } else {
+        totalActiveTime += data.timeStamp.getTime() - lastActiveTime;
+      }
+    }
+
+    if (deviceData[deviceData.length - 1].isActive) {
+      totalActiveTime += currentDate.getTime() - lastActiveTime;
+    }
+
+    const millisecondsInADay = 24 * 60 * 60 * 1000;
+    const percentage = (totalActiveTime / millisecondsInADay) * 100;
+    const hoursActive = totalActiveTime / (60 * 60 * 1000);
+
+    return { percentage, hoursActive };
   }
 }

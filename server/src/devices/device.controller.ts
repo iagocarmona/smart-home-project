@@ -66,4 +66,12 @@ export class DeviceController {
     const deactivatedDevice = await this.deviceService.deactivate(id);
     return new ResponseDTO('Successfully deactivated', deactivatedDevice);
   }
+
+  @Get(':id/day-active')
+  async getDayActive(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ResponseDTO> {
+    const dayActive = await this.deviceService.getPorcentageDayActive(id);
+    return new ResponseDTO('Successfully retrieved', dayActive);
+  }
 }

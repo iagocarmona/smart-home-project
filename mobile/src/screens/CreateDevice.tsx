@@ -8,10 +8,9 @@ import {
   Select,
   CheckIcon,
   Text,
-  View,
   Box,
 } from "native-base";
-import { Alert, TouchableOpacity } from "react-native";
+import { Alert, FlatList, TouchableOpacity } from "react-native";
 
 import { ArrowLeft, Copy, PencilSimple } from "phosphor-react-native";
 
@@ -21,7 +20,7 @@ import { DeviceController } from "../controllers/device.controller";
 import { TextArea } from "../components/TextAreaInput";
 import { useNavigation } from "@react-navigation/native";
 import { DeviceDTO } from "../DTO/device.dto";
-import { DeviceTypes, RoutesEnum } from "../utils/enums";
+import { DeviceTypes } from "../utils/enums";
 import { DeviceTypesDTO } from "../DTO/deviceType.dto";
 import { useClipboard } from "native-base";
 
@@ -77,6 +76,7 @@ export function CreateDevice() {
 
   useEffect(() => {
     handleFetchTypes();
+    console.log(deviceTypes);
   }, []);
 
   return (
@@ -117,6 +117,7 @@ export function CreateDevice() {
         _selectedItem={{
           endIcon: <CheckIcon size={5} />,
         }}
+        onValueChange={(itemValue) => setSelectedDeviceType(itemValue)}
       >
         {deviceTypes &&
           deviceTypes.map((deviceType) => (
@@ -124,7 +125,6 @@ export function CreateDevice() {
               key={deviceType.id}
               label={deviceType.name}
               value={deviceType.name}
-              onPress={() => setSelectedDeviceType(deviceType.name)}
             />
           ))}
       </Select>

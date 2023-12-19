@@ -1,4 +1,5 @@
 import { IsBoolean, IsInt, IsString, Min } from 'class-validator';
+import { Document } from 'mongoose';
 
 export class DeviceIdDTO {
   @IsInt()
@@ -36,4 +37,12 @@ export class DeviceCreateDTO {
 
   @IsBoolean()
   isActive: boolean;
+}
+
+export interface IDeviceMongo extends Document {
+  readonly deviceId: number;
+  readonly deviceName: string;
+  readonly isActive: boolean;
+  readonly timeStamp: Date;
+  readonly message: string;
 }

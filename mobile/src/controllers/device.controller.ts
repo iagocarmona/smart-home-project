@@ -68,6 +68,15 @@ export class DeviceController {
     }
   }
 
+  async delete(id: number) {
+    try {
+      const result: AxiosResponse<ApiResponse> = await api.delete(`${this.apiUrl}${this.alias}/${id}`);
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async active(deviceId: number) {
     try {
       const result: AxiosResponse<ApiResponse> = await api.post(`${this.apiUrl}${this.alias}/activate/${deviceId}`);
@@ -80,6 +89,15 @@ export class DeviceController {
   async deactive(deviceId: number) {
     try {
       const result: AxiosResponse<ApiResponse> = await api.post(`${this.apiUrl}${this.alias}/deactivate/${deviceId}`);
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async getPorcectageDayActive(deviceId: number) {
+    try {
+      const result: AxiosResponse<ApiResponse> = await api.get(`${this.apiUrl}${this.alias}/${deviceId}/day-active`);
       return result;
     } catch (error) {
       console.log(error);
