@@ -7,6 +7,17 @@
 ![Arquitetura](./architecture.drawio.png)
 
 ---
+# Imagens
+<table>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/55610b6e-a9d5-4b7e-8914-e0f84d34af7f" alt="Image 1" width="200"></td>
+    <td><img src="https://github.com/user-attachments/assets/738da7c7-c8a2-4cd2-9ad2-7bb7ea262d71" alt="Image 2" width="200"></td>
+    <td><img src="https://github.com/user-attachments/assets/29f0b139-30cc-4027-84d8-8aef53884f95" alt="Image 3" width="200"></td>
+  </tr>
+</table>
+
+
+---
 
 ## 📱 Aplicativo Principal
 
